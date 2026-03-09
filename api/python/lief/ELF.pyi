@@ -4325,6 +4325,10 @@ class DynamicEntry(lief.Object):
 
         GNU_HASH = 1879047925
 
+        TLSDESC_PLT = 1879047926
+
+        TLSDESC_GOT = 1879047927
+
         RELACOUNT = 1879048185
 
         RELCOUNT = 1879048186
@@ -4340,6 +4344,10 @@ class DynamicEntry(lief.Object):
         VERNEED = 1879048190
 
         VERNEEDNUM = 1879048191
+
+        AUXILIARY = 2147483645
+
+        FILTER = 2147483647
 
         ANDROID_REL_OFFSET = 1610612749
 
@@ -4569,6 +4577,20 @@ class DynamicEntryLibrary(DynamicEntry):
     def __str__(self) -> str: ...
 
 class DynamicSharedObject(DynamicEntry):
+    def __init__(self, library_name: str) -> None: ...
+
+    name: Union[str, bytes]
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryAuxiliary(DynamicEntry):
+    def __init__(self, library_name: str) -> None: ...
+
+    name: Union[str, bytes]
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryFilter(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
 
     name: Union[str, bytes]

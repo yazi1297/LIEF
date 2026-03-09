@@ -49,6 +49,8 @@ pub enum Tag {
     RELR,
     RELRENT,
     GNU_HASH,
+    TLSDESC_PLT,
+    TLSDESC_GOT,
     RELACOUNT,
     RELCOUNT,
     FLAGS_1,
@@ -57,6 +59,8 @@ pub enum Tag {
     VERDEFNUM,
     VERNEED,
     VERNEEDNUM,
+    AUXILIARY,
+    FILTER,
     ANDROID_REL_OFFSET,
     ANDROID_REL_SIZE,
     ANDROID_REL,
@@ -208,6 +212,8 @@ impl From<u64> for Tag {
             0x00000024 => Tag::RELR,
             0x00000025 => Tag::RELRENT,
             0x6ffffef5 => Tag::GNU_HASH,
+            0x6ffffef6 => Tag::TLSDESC_PLT,
+            0x6ffffef7 => Tag::TLSDESC_GOT,
             0x6ffffff9 => Tag::RELACOUNT,
             0x6ffffffa => Tag::RELCOUNT,
             0x6ffffffb => Tag::FLAGS_1,
@@ -216,6 +222,8 @@ impl From<u64> for Tag {
             0x6ffffffd => Tag::VERDEFNUM,
             0x6ffffffe => Tag::VERNEED,
             0x6fffffff => Tag::VERNEEDNUM,
+            0x7ffffffd => Tag::AUXILIARY,
+            0x7fffffff => Tag::FILTER,
             0x6000000d => Tag::ANDROID_REL_OFFSET,
             0x6000000e => Tag::ANDROID_REL_SIZE,
             0x6000000f => Tag::ANDROID_REL,
@@ -370,6 +378,8 @@ impl From<Tag> for u64 {
             Tag::RELR => 0x00000024,
             Tag::RELRENT => 0x00000025,
             Tag::GNU_HASH => 0x6ffffef5,
+            Tag::TLSDESC_PLT => 0x6ffffef6,
+            Tag::TLSDESC_GOT => 0x6ffffef7,
             Tag::RELACOUNT => 0x6ffffff9,
             Tag::RELCOUNT => 0x6ffffffa,
             Tag::FLAGS_1 => 0x6ffffffb,
@@ -378,6 +388,8 @@ impl From<Tag> for u64 {
             Tag::VERDEFNUM => 0x6ffffffd,
             Tag::VERNEED => 0x6ffffffe,
             Tag::VERNEEDNUM => 0x6fffffff,
+            Tag::AUXILIARY => 0x7ffffffd,
+            Tag::FILTER => 0x7fffffff,
             Tag::ANDROID_REL_OFFSET => 0x6000000d,
             Tag::ANDROID_REL_SIZE => 0x6000000e,
             Tag::ANDROID_REL => 0x6000000f,
@@ -508,6 +520,12 @@ pub enum Entries<'a> {
     /// Entry for `DT_SONAME`
     SharedObject(SharedObject<'a>),
 
+    /// Entry for `DT_AUXILIARY`
+    Auxiliary(Auxiliary<'a>),
+
+    /// Entry for `DT_FILTER`
+    Filter(Filter<'a>),
+
     /// Entry for `DT_FLAGS` and `DT_FLAGS_1`
     Flags(Flags<'a>),
 
@@ -575,6 +593,14 @@ impl DynamicEntry for Entries<'_> {
                 entry.as_base()
             }
 
+            Entries::Auxiliary(entry) => {
+                entry.as_base()
+            }
+
+            Entries::Filter(entry) => {
+                entry.as_base()
+            }
+
             Entries::Flags(entry) => {
                 entry.as_base()
             }
@@ -604,6 +630,14 @@ impl DynamicEntry for Entries<'_> {
             }
 
             Entries::SharedObject(entry) => {
+                entry.as_mut_base()
+            }
+
+            Entries::Auxiliary(entry) => {
+                entry.as_mut_base()
+            }
+
+            Entries::Filter(entry) => {
                 entry.as_mut_base()
             }
 
@@ -665,6 +699,22 @@ impl FromFFI<ffi::ELF_DynamicEntry> for Entries<'_> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::SharedObject(SharedObject::from_ffi(raw))
+            }
+            else if ffi::ELF_DynamicEntryAuxiliary::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
+                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryAuxiliary>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Entries::Auxiliary(Auxiliary::from_ffi(raw))
+            }
+            else if ffi::ELF_DynamicEntryFilter::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
+                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryFilter>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Entries::Filter(Filter::from_ffi(raw))
             }
             else if ffi::ELF_DynamicEntryFlags::classof(cmd_ref) {
                 let raw = {
@@ -1070,6 +1120,110 @@ impl DynamicEntry for SharedObject<'_> {
 impl std::fmt::Debug for SharedObject<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("SharedObject").finish()
+    }
+}
+
+/// Structure that represents a dynamic entry associated with the name of a library (`DT_AUXILIARY`)
+pub struct Auxiliary<'a> {
+    ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryAuxiliary>,
+    _owner: PhantomData<&'a ffi::ELF_Binary>
+}
+
+impl Auxiliary<'_> {
+    pub fn new(name: &str) -> Auxiliary<'static> {
+        Auxiliary::from_ffi(lief_ffi::ELF_DynamicEntryAuxiliary::create(name.to_string()))
+    }
+
+    pub fn name(&self) -> String {
+        self.ptr.name().to_string()
+    }
+
+    pub fn set_name(&mut self, name: &str) {
+        self.ptr.pin_mut().set_name(name.to_string());
+    }
+}
+
+impl FromFFI<ffi::ELF_DynamicEntryAuxiliary> for Auxiliary<'_> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryAuxiliary>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData
+        }
+    }
+}
+
+impl DynamicEntry for Auxiliary<'_> {
+    fn as_base(&self) -> &ffi::ELF_DynamicEntry {
+        self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_mut_base(&mut self) -> Pin<&mut ffi::ELF_DynamicEntry> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::ELF_DynamicEntry
+                    as *mut ffi::ELF_DynamicEntry)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
+    }
+}
+
+impl std::fmt::Debug for Auxiliary<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Auxiliary").finish()
+    }
+}
+
+/// Structure that represents a dynamic entry associated with the name of a library (`DT_FILTER`)
+pub struct Filter<'a> {
+    ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryFilter>,
+    _owner: PhantomData<&'a ffi::ELF_Binary>
+}
+
+impl Filter<'_> {
+    pub fn new(name: &str) -> Filter<'static> {
+        Filter::from_ffi(lief_ffi::ELF_DynamicEntryFilter::create(name.to_string()))
+    }
+
+    pub fn name(&self) -> String {
+        self.ptr.name().to_string()
+    }
+
+    pub fn set_name(&mut self, name: &str) {
+        self.ptr.pin_mut().set_name(name.to_string());
+    }
+}
+
+impl FromFFI<ffi::ELF_DynamicEntryFilter> for Filter<'_> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryFilter>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData
+        }
+    }
+}
+
+impl DynamicEntry for Filter<'_> {
+    fn as_base(&self) -> &ffi::ELF_DynamicEntry {
+        self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_mut_base(&mut self) -> Pin<&mut ffi::ELF_DynamicEntry> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::ELF_DynamicEntry
+                    as *mut ffi::ELF_DynamicEntry)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
+    }
+}
+
+impl std::fmt::Debug for Filter<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Filter").finish()
     }
 }
 

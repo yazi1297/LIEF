@@ -702,6 +702,8 @@ enum LIEF_DYNAMIC_TAGS {
   LIEF_DT_HIPROC                     = 0x7FFFFFFF, /**< End of processor specific tags. */
 
   LIEF_DT_GNU_HASH                   = 0x6FFFFEF5, /**< Reference to the GNU hash table. */
+  LIEF_DT_TLSDESC_PLT                = 0x6FFFFEF6, /**< Location of PLT entry for TLS descriptor resolver calls. */
+  LIEF_DT_TLSDESC_GOT                = 0x6FFFFEF7, /**< Location of GOT entry for TLS descriptor resolver PLT entry. */
   LIEF_DT_RELACOUNT                  = 0x6FFFFFF9, /**< ELF32_Rela count. */
   LIEF_DT_RELCOUNT                   = 0x6FFFFFFA, /**< ELF32_Rel count. */
 
@@ -711,6 +713,9 @@ enum LIEF_DYNAMIC_TAGS {
   LIEF_DT_VERDEFNUM                  = 0x6FFFFFFD, /**< The number of entries in DT_VERDEF. */
   LIEF_DT_VERNEED                    = 0x6FFFFFFE, /**< The address of the version Dependency table. */
   LIEF_DT_VERNEEDNUM                 = 0x6FFFFFFF, /**< The number of entries in DT_VERNEED. */
+
+  LIEF_DT_AUXILIARY                  = 0x7ffffffd, /**< Shared object to load before self */
+  LIEF_DT_FILTER                     = 0x7fffffff, /**< Shared object to filter from */
 
   /* Mips specific dynamic table entry tags. */
   LIEF_DT_MIPS_RLD_VERSION           = 0x70000001, /**< 32 bit version number for runtime linker interface. */

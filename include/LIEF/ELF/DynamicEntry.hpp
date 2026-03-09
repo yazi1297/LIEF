@@ -86,6 +86,8 @@ class LIEF_API DynamicEntry : public Object {
 
     // GNU Extensions
     GNU_HASH                   = 0x6FFFFEF5, /**< Reference to the GNU hash table. */
+    TLSDESC_PLT                = 0x6FFFFEF6, /**< Location of PLT entry for TLS descriptor resolver calls. */
+    TLSDESC_GOT                = 0x6FFFFEF7, /**< Location of GOT entry for TLS descriptor resolver PLT entry. */
     RELACOUNT                  = 0x6FFFFFF9, /**< ELF32_Rela count. */
     RELCOUNT                   = 0x6FFFFFFA, /**< ELF32_Rel count. */
     FLAGS_1                    = 0x6FFFFFFB, /**< Flags_1. */
@@ -94,6 +96,9 @@ class LIEF_API DynamicEntry : public Object {
     VERDEFNUM                  = 0x6FFFFFFD, /**< The number of entries in DT_VERDEF. */
     VERNEED                    = 0x6FFFFFFE, /**< The address of the version Dependency table. */
     VERNEEDNUM                 = 0x6FFFFFFF, /**< The number of entries in DT_VERNEED. */
+
+    AUXILIARY                  = 0x7ffffffd, /**< Shared object to load before self */
+    FILTER                     = 0x7fffffff, /**< Shared object to filter from */
 
     // Android Extensions
     ANDROID_REL_OFFSET         = 0x6000000D, /**< The offset of packed relocation data (older version < M) (Android specific). */

@@ -916,6 +916,11 @@
     :cpp:func:`std::unique_ptr<Builder> LIEF::MachO::Binary::write(std::ostream &, const Builder::config_t &)`
 
 
+.. |lief-macho-fatbinary-create| lief-api:: lief.MachO.FatBinary.create()
+
+    :py:meth:`lief.MachO.FatBinary.create`
+    :cpp:func:`LIEF::MachO::FatBinary::create`
+
 .. |lief-macho-fatbinary-write| lief-api:: lief.MachO.FatBinary.write()
 
     :py:meth:`lief.FatBinary.Binary.write`
@@ -1145,3 +1150,16 @@
     :py:meth:`lief.COFF.Binary.disassemble`
     :py:meth:`lief.COFF.Binary.disassemble_from_bytes`
     :cpp:func:`LIEF::COFF::Binary::disassemble`
+
+.. |lief-elf-DynamicEntryAuxiliary| lief-api:: lief.ELF.DynamicEntryAuxiliary
+
+    :py:class:`lief.ELF.DynamicEntryAuxiliary`
+    :cpp:class:`LIEF::ELF::DynamicEntryAuxiliary`
+    :rust:struct:`lief::elf::dynamic::Auxiliary`
+
+.. |lief-elf-DynamicEntryFilter| lief-api:: lief.ELF.DynamicEntryFilter
+
+    :py:class:`lief.ELF.DynamicEntryFilter`
+    :cpp:class:`LIEF::ELF::DynamicEntryFilter`
+    :rust:struct:`lief::elf::dynamic::Filter`
+
