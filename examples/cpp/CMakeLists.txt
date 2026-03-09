@@ -1,3 +1,11 @@
+if (WIN32)
+  # LIEF C++ examples are not needed for qilingcpp on Windows
+  # and some of them (e.g. ObjC / Mach-O helpers) rely on
+  # platform-specific features that do not compile cleanly
+  # with modern MSVC and C++20. Skip building them entirely.
+  return()
+endif()
+
 set(LIEF_CPP_EXAMPLES
   logging.cpp
   disassembler.cpp
