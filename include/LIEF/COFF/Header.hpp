@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <memory>
 #include <ostream>
+#include <string>
 
 #include "LIEF/visibility.h"
 #include "LIEF/PE/Header.hpp"

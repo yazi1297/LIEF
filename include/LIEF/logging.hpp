@@ -22,6 +22,7 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <sstream>
 
 namespace spdlog {
 class logger;
@@ -30,6 +31,24 @@ class logger;
 namespace LIEF {
 namespace logging {
 
+namespace detail {
+
+template <typename T>
+inline std::string to_string_any(const T& v) {
+  std::ostringstream oss;
+  oss << v;
+  return oss.str();
+}
+
+inline std::string to_string_any(const std::string& v) {
+  return v;
+}
+
+inline std::string to_string_any(const char* v) {
+  return std::string(v);
+}
+
+} // namespace detail
 /// **Hierarchical** logging level
 ///
 /// From a given level set, all levels below this ! level are enabled
@@ -72,7 +91,9 @@ LIEF_API void log(LEVEL level, const std::string& fmt,
 template <typename... Args>
 void log(LEVEL level, const std::string& fmt, const Args &... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.reserve(sizeof...(Args));
+  int dummy[] = {0, (vec_args.push_back(detail::to_string_any(args)), 0)...};
+  (void)dummy;
   return log(level, fmt, vec_args);
 }
 
@@ -95,7 +116,9 @@ inline void debug(const std::string& fmt, const std::vector<std::string>& args) 
 template <typename... Args>
 void debug(const std::string& fmt, const Args &... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.reserve(sizeof...(Args));
+  int dummy[] = {0, (vec_args.push_back(detail::to_string_any(args)), 0)...};
+  (void)dummy;
   return debug(fmt, vec_args);
 }
 
@@ -112,7 +135,9 @@ inline void info(const std::string& fmt, const std::vector<std::string>& args) {
 template <typename... Args>
 void info(const std::string& fmt, const Args &... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.reserve(sizeof...(Args));
+  int dummy[] = {0, (vec_args.push_back(detail::to_string_any(args)), 0)...};
+  (void)dummy;
   return info(fmt, vec_args);
 }
 
@@ -129,7 +154,9 @@ inline void warn(const std::string& fmt, const std::vector<std::string>& args) {
 template <typename... Args>
 void warn(const std::string& fmt, const Args &... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.reserve(sizeof...(Args));
+  int dummy[] = {0, (vec_args.push_back(detail::to_string_any(args)), 0)...};
+  (void)dummy;
   return warn(fmt, vec_args);
 }
 
@@ -146,7 +173,9 @@ inline void err(const std::string& fmt, const std::vector<std::string>& args) {
 template <typename... Args>
 void err(const std::string& fmt, const Args &... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.reserve(sizeof...(Args));
+  int dummy[] = {0, (vec_args.push_back(detail::to_string_any(args)), 0)...};
+  (void)dummy;
   return err(fmt, vec_args);
 }
 
@@ -163,7 +192,9 @@ inline void critical(const std::string& fmt, const std::vector<std::string>& arg
 template <typename... Args>
 void critical(const std::string& fmt, const Args &... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.reserve(sizeof...(Args));
+  int dummy[] = {0, (vec_args.push_back(detail::to_string_any(args)), 0)...};
+  (void)dummy;
   return critical(fmt, vec_args);
 }
 

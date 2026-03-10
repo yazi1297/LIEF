@@ -17,6 +17,7 @@
 #define LIEF_PE_FPO_H
 
 #include <vector>
+#include <string>
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PE/debug/Debug.hpp"

@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <ostream>
 #include <memory>
+#include <string>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

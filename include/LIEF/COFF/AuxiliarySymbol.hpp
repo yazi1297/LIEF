@@ -19,6 +19,7 @@
 #include <ostream>
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
