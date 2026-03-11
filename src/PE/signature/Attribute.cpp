@@ -15,6 +15,8 @@
  */
 #include <string>
 #include <ostream>
+#include <unordered_map>
+#include <utility>
 
 #include "frozen.hpp"
 
@@ -29,8 +31,8 @@ void Attribute::accept(Visitor& visitor) const {
 }
 
 const char* to_string(Attribute::TYPE e) {
-  #define ENTRY(X) std::pair(Attribute::TYPE::X, #X)
-  STRING_MAP enums2str {
+  #define ENTRY(X) std::make_pair(Attribute::TYPE::X, #X)
+  std::unordered_map<Attribute::TYPE, const char*> enums2str {
     ENTRY(UNKNOWN),
     ENTRY(CONTENT_TYPE),
     ENTRY(GENERIC_TYPE),

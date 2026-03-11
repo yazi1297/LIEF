@@ -15,11 +15,13 @@
  */
 #include "LIEF/PE/CodePage.hpp"
 #include "frozen.hpp"
+#include <unordered_map>
+#include <utility>
 
 namespace LIEF::PE {
 const char* to_string(CODE_PAGES e) {
-  #define ENTRY(X) std::pair(CODE_PAGES::X, #X)
-  STRING_MAP enums2str {
+  #define ENTRY(X) std::make_pair(CODE_PAGES::X, #X)
+  std::unordered_map<CODE_PAGES, const char*> enums2str {
     ENTRY(IBM037),
     ENTRY(IBM437),
     ENTRY(IBM500),
