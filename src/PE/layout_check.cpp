@@ -111,7 +111,8 @@ class LayoutChecker {
 
   template <typename... Args>
   bool error(const char *fmt, const Args &... args) {
-    error_msg = fmt::format(fmt, args...);
+    // Use runtime formatting to avoid MSVC consteval/fstring issues with fmt v12.
+    error_msg = fmt::vformat(fmt::string_view(fmt), fmt::make_format_args(args...));
     return false;
   }
 

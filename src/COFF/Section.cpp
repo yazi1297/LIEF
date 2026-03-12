@@ -106,7 +106,6 @@ optional<Section::ComdatInfo> Section::comdat_info() const {
 }
 
 std::string Section::to_string() const {
-  using namespace fmt;
   static constexpr auto WIDTH = 24;
   std::ostringstream os;
 
@@ -120,27 +119,27 @@ std::string Section::to_string() const {
   fullname_hex.reserve(name().size());
   std::transform(fullname().begin(), fullname().end(),
                  std::back_inserter(fullname_hex),
-                 [] (const char c) { return format("{:02x}", c); });
+                 [] (const char c) { return fmt::format("{:02x}", c); });
 
   if (const String* coff_str = coff_string()) {
-    os << format("{:{}} {} ({}, {})\n", "Name:", WIDTH, name(),
-                 join(fullname_hex, " "), coff_str->str());
+    os << fmt::format("{:{}} {} ({}, {})\n", "Name:", WIDTH, name(),
+                      fmt::join(fullname_hex, " "), coff_str->str());
   } else {
-    os << format("{:{}} {} ({})\n", "Name:", WIDTH, name(),
-                 join(fullname_hex, " "));
+    os << fmt::format("{:{}} {} ({})\n", "Name:", WIDTH, name(),
+                      fmt::join(fullname_hex, " "));
   }
 
-  os << format("{:{}} 0x{:x}\n", "Virtual Size", WIDTH, virtual_size())
-     << format("{:{}} 0x{:x}\n", "Virtual Address", WIDTH, virtual_address())
-     << format("{:{}} 0x{:x}\n", "Size of raw data", WIDTH, sizeof_raw_data())
-     << format("{:{}} 0x{:x}\n", "Pointer to raw data", WIDTH, pointerto_raw_data())
-     << format("{:{}} [0x{:08x}, 0x{:08x}]\n", "Range", WIDTH,
-               pointerto_raw_data(), pointerto_raw_data() + sizeof_raw_data())
-     << format("{:{}} 0x{:x}\n", "Pointer to relocations", WIDTH, pointerto_relocation())
-     << format("{:{}} 0x{:x}\n", "Pointer to line numbers", WIDTH, pointerto_line_numbers())
-     << format("{:{}} 0x{:x}\n", "Number of relocations", WIDTH, numberof_relocations())
-     << format("{:{}} 0x{:x}\n", "Number of lines", WIDTH, numberof_line_numbers())
-     << format("{:{}} {}", "Characteristics", WIDTH, join(list_str, ", "));
+  os << fmt::format("{:{}} 0x{:x}\n", "Virtual Size", WIDTH, virtual_size())
+     << fmt::format("{:{}} 0x{:x}\n", "Virtual Address", WIDTH, virtual_address())
+     << fmt::format("{:{}} 0x{:x}\n", "Size of raw data", WIDTH, sizeof_raw_data())
+     << fmt::format("{:{}} 0x{:x}\n", "Pointer to raw data", WIDTH, pointerto_raw_data())
+     << fmt::format("{:{}} [0x{:08x}, 0x{:08x}]\n", "Range", WIDTH,
+                    pointerto_raw_data(), pointerto_raw_data() + sizeof_raw_data())
+     << fmt::format("{:{}} 0x{:x}\n", "Pointer to relocations", WIDTH, pointerto_relocation())
+     << fmt::format("{:{}} 0x{:x}\n", "Pointer to line numbers", WIDTH, pointerto_line_numbers())
+     << fmt::format("{:{}} 0x{:x}\n", "Number of relocations", WIDTH, numberof_relocations())
+     << fmt::format("{:{}} 0x{:x}\n", "Number of lines", WIDTH, numberof_line_numbers())
+     << fmt::format("{:{}} {}", "Characteristics", WIDTH, fmt::join(list_str, ", "));
 
   return os.str();
 
