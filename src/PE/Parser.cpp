@@ -1,4 +1,4 @@
-/* Copyright 2017 - 2026 R. Thomas
+﻿/* Copyright 2017 - 2026 R. Thomas
  * Copyright 2017 - 2026 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1254,7 +1254,7 @@ bool Parser::is_valid_import_name(const std::string& name) {
   }
   const bool valid_chars = std::all_of(std::begin(name), std::end(name),
       [] (char c) {
-        return ::isprint(c);
+        return ::isprint(static_cast<unsigned char>(c));
       });
   return valid_chars;
 }
